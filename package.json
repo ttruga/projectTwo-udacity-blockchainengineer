@@ -1,0 +1,13 @@
+{
+  "name": "ProjectTwo",
+  "version": "1.0.0",
+  "description": "Second project for blockchain nanodegree",
+  "main": "index.js",
+  "author": "Pablo Castro",
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "level": "^4.0.0"
+  }
+}
