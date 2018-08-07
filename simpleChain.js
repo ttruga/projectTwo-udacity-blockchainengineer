@@ -1,13 +1,11 @@
 /* ===== SHA256 with Crypto-js ===============================
 |  Learn more: Crypto-js: https://github.com/brix/crypto-js  |
 |  =========================================================*/
-
 const SHA256 = require('crypto-js/sha256');
 
 /* ===== Block Class ==============================
 |  Class with a constructor for block 			   |
 |  ===============================================*/
-
 class Block {
   constructor(data) {
     this.hash              = '';
@@ -54,8 +52,7 @@ class Blockchain {
       return console.log('Unable to read data stream!', err)
     })
     .on('close', () => {
-      console.log('Last Block height: ' + blockIndex);
-
+      // console.log('Last Block height: ' + blockIndex);
       if (blockIndex === 0) {
         newBlock.hash = SHA256(JSON.stringify(newBlock)).toString();
         this.chain.put(blockIndex, JSON.stringify(newBlock), function(err) {
@@ -64,8 +61,7 @@ class Blockchain {
         return;
       }
 
-      console.log('Last Block data: ' + JSON.stringify(lastBlock));
-
+      // console.log('Last Block data: ' + JSON.stringify(lastBlock));
       newBlock.height = blockIndex;
       newBlock.time   = new Date().getTime().toString().slice(0, -3);
 
@@ -92,7 +88,7 @@ class Blockchain {
       }
       return null;
     } catch(e) {
-      console.log('blockHeight ' + blockHeight + ' not found!', err.message);
+      console.log('blockHeight ' + blockHeight + ' not found!', e.message);
       return null;
     }
   }
@@ -127,6 +123,7 @@ class Blockchain {
 
       // Compare
       if (blockHash === validBlockHash) {
+        console.log('Block #' + blockHeight + ' is VALID!');
         return true;
       } else {
         console.log('Block #' + blockHeight + ' invalid hash:\n' + blockHash + '<>' + validBlockHash);
@@ -161,7 +158,7 @@ class Blockchain {
           console.log('Block errors = ' + errorLog.length);
           console.log('Blocks: ' + errorLog);
         } else {
-          console.log('No errors detected');
+          console.log('validateChain: No errors detected');
         }
       } catch(e) {
         console.log('validateChain error: ', e.message);

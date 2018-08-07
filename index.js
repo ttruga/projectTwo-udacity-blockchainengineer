@@ -4,21 +4,16 @@ const chainDB               = './chaindata';
 const db                    = level(chainDB);
 
 let chain = new Blockchain(db);
-chain.getBlock(0);
 
-let block = new Block('hola');
-chain.addBlock(block);
+let promises = [];
+promises.push(chain.addBlock(new Block('hola')));
+promises.push(chain.addBlock(new Block('chao')));
+promises.push(chain.addBlock(new Block('wasaapaaaaaa!')));
 
-block = new Block('chao');
-chain.addBlock(block);
+return Promise.all(promises).then(() => chain.validateChain());
 
-if (chain.validateBlock(1)) {
-  console.log('block 1 is valid');
-} else {
-  console.log('block 1 is not valid');
-}
 
-return chain.validateChain();
+
 
 
 
