@@ -83,29 +83,18 @@ class Blockchain {
   }
 
   // get block
-  getBlock(blockHeight) {
+  async getBlock(blockHeight) {
     // return object as a single string
-    //return JSON.parse(JSON.stringify(this.chain[blockHeight]));
-    return this.chain.get(blockHeight)
-    .then(value => {
-      // console.log('Value = ' + value);
-      return JSON.parse(value);
-    })
-    .catch(err => {
-      // console.log('blockHeight ' + blockHeight + ' not found!', err.message);
+    try {
+      const block = await this.chain.get(blockHeight);
+      if (block) {
+        return JSON.parse(block);
+      }
       return null;
-    });
-  }
-
-  getAllBlocks() {
-    this.chain.createReadStream()
-    .on('data', function(data) {
-      console.log(data.value);
-    })
-    .on('error', function(err) {
-      return console.log('Unable to read data stream!', err)
-    })
-    .on('close', function() {});
+    } catch(e) {
+      console.log('blockHeight ' + blockHeight + ' not found!', err.message);
+      return null;
+    }
   }
 
   getBlockHeight() {
@@ -123,27 +112,28 @@ class Blockchain {
   }
 
   // validate block
-  validateBlock(blockHeight) {
+  async validateBlock(blockHeight) {
     // get block object
-    return this.getBlock(blockHeight)
-    .then(block => {
-      if (block) {
-        // get block hash
-        let blockHash      = block.hash;
-        // remove block hash to test block integrity
-        block.hash         = '';
-        // generate block hash
-        let validBlockHash = SHA256(JSON.stringify(block)).toString();
-        // Compare
-        if (blockHash === validBlockHash) {
-          return true;
-        } else {
-          console.log('Block #' + blockHeight + ' invalid hash:\n' + blockHash + '<>' + validBlockHash);
-          return false;
-        }
+    const block = await this.getBlock(blockHeight);
+    if (block) {
+      // get block hash
+      let blockHash = block.hash;
+
+      // remove block hash to test block integrity
+      block.hash = '';
+
+      // generate block hash
+      let validBlockHash = SHA256(JSON.stringify(block)).toString();
+
+      // Compare
+      if (blockHash === validBlockHash) {
+        return true;
+      } else {
+        console.log('Block #' + blockHeight + ' invalid hash:\n' + blockHash + '<>' + validBlockHash);
+        return false;
       }
-      return null;
-    });
+    }
+    return null;
   }
 
   // Validate blockchain
@@ -174,7 +164,7 @@ class Blockchain {
           console.log('No errors detected');
         }
       } catch(e) {
-
+        console.log('validateChain error: ', e.message);
       }
     }
   }

@@ -4,24 +4,21 @@ const chainDB               = './chaindata';
 const db                    = level(chainDB);
 
 let chain = new Blockchain(db);
-// let block = new Block('vhchchhchchch');
-// chain.addBlock(block);
+chain.getBlock(0);
 
-//chain.getBlock(2);
+let block = new Block('hola');
+chain.addBlock(block);
 
-//chain.getAllBlocks();
+block = new Block('chao');
+chain.addBlock(block);
 
+if (chain.validateBlock(1)) {
+  console.log('block 1 is valid');
+} else {
+  console.log('block 1 is not valid');
+}
 
-// if (chain.validateBlock(1)) {
-//  console.log('Es valido!');
-// } else {
-//   console.log('NO es valido!');
-// }
-
-chain.validateChain();
-
-// return chain.getBlockHeight()
-// .then(val => console.log(val));
+return chain.validateChain();
 
 
 
