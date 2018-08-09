@@ -12,17 +12,9 @@ Installing Node and NPM is pretty straightforward using the installer package av
 
 ### Configuring your project
 
-- Use NPM to initialize your project and create package.json to store project dependencies.
+- Get all packages needed for the project
 ```
-npm init
-```
-- Install crypto-js with --save flag to save dependency to our package.json file
-```
-npm install crypto-js --save
-```
-- Install level with --save flag
-```
-npm install level --save
+yarn install
 ```
 
 ## Testing
@@ -51,9 +43,9 @@ let chain = new Blockchain();
 ```
 chain.validateChain();
 ```
-7: Induce errors by changing block data by first resetting the REPL, executing `node` again and pasting the following code
+7: Induce errors by changing block data by first resetting the REPL, executing `node` again and pasting the following code, please first shut down the current `node` session and start a new one so the DB is not caught by the previous process
 ```
-# first reset the 
+# first reset the node
 const level = require('level');
 const chainDB = './chaindata';
 const db = level(chainDB);
@@ -67,7 +59,7 @@ db.get(3).then(block => {
   return db.put(3, JSON.stringify(promises[0]))
 });
 ```
-8: Validate blockchain. The chain should now fail with block 3.
+8: Clear the node session, start a new one, then execute steps 3 and 4 and validate blockchain again. The chain should now fail with block 3.
 ```
 chain.validateChain();
 ```
