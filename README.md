@@ -40,9 +40,11 @@ let blockchain = new Blockchain();
 ```
 5: Generate 10 blocks using a for loop
 ```
-for (var i = 0; i <= 10; i++) {
-  blockchain.addBlock(new Block("test data "+i));
+let promises = [];
+for (let i = 0; i <= 10; i++) {
+  promises.push(blockchain.addBlock(new Block("test data "+i)));
 }
+Promises.all(promises)
 ```
 6: Validate blockchain
 ```

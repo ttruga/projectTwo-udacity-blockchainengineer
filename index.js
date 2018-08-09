@@ -1,19 +1,22 @@
 const { Block, Blockchain } = require('./simpleChain');
-const level                 = require('level');
-const chainDB               = './chaindata';
-const db                    = level(chainDB);
 
-let chain = new Blockchain(db);
+let chain = new Blockchain();
 
-let promises = [];
-promises.push(chain.addBlock(new Block('hola')));
-promises.push(chain.addBlock(new Block('chao')));
-promises.push(chain.addBlock(new Block('wasaapaaaaaa!')));
+return chain.getBlockHeight()
+.then(h => {
+  console.log(h);
+  return chain.getBlock(0);
+})
+.then(block => {
+  console.log(block);
+  return chain.addBlock(new Block('Second block on the chain'));
+})
+.then(d => {
+  console.log(d);
+  return chain.validateChain();
+});
 
-return Promise.all(promises).then(() => chain.validateChain());
 
-
-
-
-
-
+// chain.addBlock(new Block('Second block on the chain')).then(d => console.log(d));
+// chain.getBlock(0).then(block => console.log(block))
+// chain.getBlockHeight().then(h => console.log(h))
