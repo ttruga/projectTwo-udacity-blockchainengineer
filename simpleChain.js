@@ -87,7 +87,7 @@ class Blockchain {
         console.log('Block #' + blockHeight + ' is VALID!');
         return true;
       } else {
-        console.log('Block #' + blockHeight + ' invalid hash:\n' + blockHash + '<>' + validBlockHash);
+        console.log('Block #' + blockHeight + ' IS INVALID!!! hash:\n' + blockHash + ' <> ' + validBlockHash);
         return false;
       }
     }
@@ -126,4 +126,3 @@ class Blockchain {
   }
 }
 
-module.exports = { Block, Blockchain };

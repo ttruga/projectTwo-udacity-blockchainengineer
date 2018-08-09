@@ -33,31 +33,41 @@ To test code:
 ```
 node
 ```
-3: Copy and paste your code into your node session
-4: Instantiate blockchain with blockchain variable
+3: Copy and paste the code contained inside `simpleChain.js` file into your node session
+4: Instantiate blockchain with chain variable
 ```
-let blockchain = new Blockchain();
+let chain = new Blockchain();
 ```
 5: Generate 10 blocks using a for loop
 ```
-let promises = [];
-for (let i = 0; i <= 10; i++) {
-  promises.push(blockchain.addBlock(new Block("test data "+i)));
-}
-Promises.all(promises)
+(function theLoop (i) {
+  setTimeout(function () {
+    chain.addBlock(new Block(`test block n: ${i}`))
+    if (--i) theLoop(i);
+  }, 100);
+})(10);
 ```
 6: Validate blockchain
 ```
-blockchain.validateChain();
+chain.validateChain();
 ```
-7: Induce errors by changing block data
+7: Induce errors by changing block data by first resetting the REPL, executing `node` again and pasting the following code
 ```
-let inducedErrorBlocks = [2,4,7];
-for (var i = 0; i < inducedErrorBlocks.length; i++) {
-  blockchain.chain[inducedErrorBlocks[i]].data='induced chain error';
-}
+# first reset the 
+const level = require('level');
+const chainDB = './chaindata';
+const db = level(chainDB);
+
+db.get(3).then(block => {
+  console.log(block);
+  const modBlock =  JSON.parse(block);
+  modBlock.body = 'this is a screw up body';
+  return Promise.all([modBlock, db.del(3)]);
+}).then(promises => {
+  return db.put(3, JSON.stringify(promises[0]))
+});
 ```
-8: Validate blockchain. The chain should now fail with blocks 2,4, and 7.
+8: Validate blockchain. The chain should now fail with block 3.
 ```
-blockchain.validateChain();
+chain.validateChain();
 ```
