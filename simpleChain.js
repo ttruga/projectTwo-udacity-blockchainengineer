@@ -99,7 +99,7 @@ class Blockchain {
 
     const height = await this.getBlockHeight();
 
-    for (let i = 0; i < height - 1; i++) {
+    for (let i = 0; i < height; i++) {
       const blockIsValid = await this.validateBlock(i);
 
       if (!blockIsValid) {
@@ -107,17 +107,19 @@ class Blockchain {
       }
 
       try {
-        let blockHash    = await this.getBlock(i).hash;
-        let previousHash = await this.getBlock(i + 1).previousBlockHash;
-        if (blockHash !== previousHash) {
-          errorLog.push(i);
-        }
+        if (i !== 0) {
+          let block         = await this.getBlock(i);
+          let previousBlock = await this.getBlock(i - 1);
+          if (block.previousBlockHash !== previousBlock.hash) {
+            errorLog.push(i);
+          }
 
-        if (errorLog.length > 0) {
-          console.log('Block errors = ' + errorLog.length);
-          console.log('Blocks: ' + errorLog);
-        } else {
-          console.log('validateChain: No errors detected');
+          if (errorLog.length > 0) {
+            console.log('Block errors = ' + errorLog.length);
+            console.log('Blocks: ' + errorLog);
+          } else {
+            console.log('validateChain: No errors detected');
+          }
         }
       } catch(e) {
         console.log('validateChain error: ', e.message);
@@ -126,3 +128,4 @@ class Blockchain {
   }
 }
 
+module.exports = {Block, Blockchain};
