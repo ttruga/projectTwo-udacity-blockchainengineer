@@ -59,7 +59,10 @@ class Blockchain {
       return this.chain.put(newBlock.height, JSON.stringify(newBlock));
 
     } catch(err) {
-      if (err) return console.log('Block ' + blockHeight + ' submission failed', err);
+      if (err) {
+        console.error('Block ' + blockHeight + ' submission failed', err);
+        return null;
+      }
     }
   }
 
