@@ -1,25 +1,29 @@
-# Blockchain Data
+# Blockchain Data explorer
 
-Blockchain has the potential to change the way that the world approaches data. Develop Blockchain skills by understanding the data model behind Blockchain by developing your own simplified private blockchain.
+This project implements a blockchain and a block class that allows anybody to store validated data into a transaction database. It also includes an REST API that connects the database with the external world. 
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
-### Prerequisites
-
-Installing Node and NPM is pretty straightforward using the installer package available from the (Node.js® web site)[https://nodejs.org/en/].
-
-### Configuring your project
-
-- Get all packages needed for the project
+## Quickstart
+In order to configure the project, first get all the packages..
 ```
-yarn install
+yarn install 
+```
+then start the server..
+```
+node index.js
+```
+## Usage
+The API exposes two endpoints, `GET` a block and `POST` a block. 
+```
+// Get block 0
+curl "http://localhost:8000/block/0"
+
+// POST new block
+curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body": "Testing block with test string data"}'
 ```
 
-## Testing
+## Testing blockchain class
+To test the code:
 
-To test code:
 1: Open a command prompt or shell terminal after install node.js.
 2: Enter a node session, also known as REPL (Read-Evaluate-Print-Loop).
 ```
