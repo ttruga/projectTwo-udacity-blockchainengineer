@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Introduction</h1>
+    Welcome to the Blockchain API! You can use our API to access blocks by using API endpoints, which can get information on blocks and transactions in our local blockchain.
+
+    <h2>Blocks</h2>
+    <h3>Get block </h3>
+    <p>This endpoint retrieves the block located at a certain height</p>
+
+    <ul>
+        <li>GET http://localhost:8000/block/{height}</li>
+    </ul>
+
+    Example:
+    <ul>
+        <li>curl "http://localhost:8000/block/0"</li>
+    </ul>
+
+    Returns:
+    <div>
+        {
+        "hash": "028a38089b871f8742f635bf93f926eff59e20a6f897cb38a81f96d60f985e00",
+        "height": 0,
+        "body": "First block in the chain - Genesis block",
+        "time": 0,
+        "previousBlockHash": ""
+        }
+    </div>
+
+    <h3>Insert block </h3>
+    <p>This endpoint inserts a new block at the end of the chain</p>
+
+    <ul>
+        <li>POST http://localhost:8000/block</li>
+    </ul>
+
+    Example:
+    <ul>
+        <li>curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body": "Testing block with test string data"}'</li>
+    </ul>
+
+    Returns:
+    <div>
+        {"body":"Testing block with test string data","height":4,"time":"1535120069","previousBlockHash":"90b78c67cf5ea45530251a967a75aace839108b322185770bb3aeb86946880cf","hash":"e83d84b6b6cb9a817e6c5bb39e89a8fb440c17b5dd07c3cbb8f8c8187ebce90d"}
+    </div>
+</body>
+</html>

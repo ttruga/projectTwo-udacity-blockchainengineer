@@ -1,9 +1,14 @@
 # Blockchain Data explorer
 
-This project implements a blockchain and a block class that allows anybody to store validated data into a transaction database. It also includes an REST API that connects the database with the external world. 
+This project implements a blockchain and a block class that allows anybody to store validated data into a transaction database. It also includes an REST API that connects the database with the external world.
+
+## Frameworks used
+* node.js - 8.11.1
+* express - 4.16.3
+* body-parser - 4.16.3
 
 ## Quickstart
-In order to configure the project, first get all the packages..
+In order to configure the project, first you need to install node 8.11, we recommend for this effect to use [NVM](https://github.com/creationix/nvm "NVM")
 ```
 yarn install 
 ```
@@ -12,13 +17,19 @@ then start the server..
 node index.js
 ```
 ## Usage
-The API exposes two endpoints, `GET` a block and `POST` a block. 
+The API exposes three endpoints: 
+ 
 ```
 // Get block 0
 curl "http://localhost:8000/block/0"
 
 // POST new block
 curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body": "Testing block with test string data"}'
+```
+You can find more instructions here: 
+
+```
+http://localhost:8000
 ```
 
 ## Testing blockchain class
