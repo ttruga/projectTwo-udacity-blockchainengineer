@@ -6,6 +6,9 @@ const path       = require('path');
 const app   = express();
 const chain = new Blockchain();
 
+const memoryValidations = {};
+const windowDuration = 4;
+
 // Configuring the express framework to use the json parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -48,6 +51,53 @@ app.post('/block', (req, res) => {
     return res.status(200).send(block);       // we return the new block
   });
 });
+
+app.post('/requestValidation', (req, res) => {
+  const { body } = req;
+
+  if (!body) {
+    return res.status(400).send({ message: 'Invalid request, Body missing' });
+  }
+  const { address } = body;
+  if (!address) {
+    return res.status(400).send({ message: 'Invalid request, blockchain address missing' });
+  }
+
+  const addressEntry     = memoryValidations[address];
+  const requestTimestamp = Math.floor(Date.now() / 1000);
+
+  if (!addressEntry) {
+    memoryValidations[address] = { timestamp: requestTimestamp, message: '' };
+  }
+
+  const window = Math.floor(Date.now() / 1000) - memoryValidations[address].timestamp;
+
+  if (windowDuration - window < 0) {
+    delete memoryValidations[address];
+    return res.status(400).send({ message: 'time window expired' });
+  }
+
+  const message = `${address}:${memoryValidations[address].timestamp}:starRegistry`;
+  return res.status(200).send({ message, requestTimestamp, remaining: windowDuration - window });
+});
+
+app.post('message-signature/validate', (req, res) => {
+  const { body } = req;
+  if (!body) {
+    return res.status(400).send({ message: 'block is required' });
+  }
+
+  const { address, signature } = body;
+
+});
+
+//
+// app.post('/block', (req, res) => {
+//   const { body } = req;
+//   if (!body) {
+//     return res.status(400).send({ message: 'block is required' });
+//   }
+// });
 
 /**
  * root basepath serves the documentation
