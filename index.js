@@ -1,13 +1,14 @@
-const express    = require('express');
-const bodyParser = require('body-parser');
-const Blockchain = require('./simpleChain').Blockchain;
-const path       = require('path');
+const express        = require('express');
+const bodyParser     = require('body-parser');
+const bitcoinMessage = require('bitcoinjs-message');
+const Blockchain     = require('./simpleChain').Blockchain;
+const path           = require('path');
 
 const app   = express();
 const chain = new Blockchain();
 
 const memoryValidations = {};
-const windowDuration = 4;
+const windowDuration = 300;
 
 // Configuring the express framework to use the json parser
 app.use(bodyParser.json());
@@ -53,12 +54,8 @@ app.post('/block', (req, res) => {
 });
 
 app.post('/requestValidation', (req, res) => {
-  const { body } = req;
+  const { address } = req.body;
 
-  if (!body) {
-    return res.status(400).send({ message: 'Invalid request, Body missing' });
-  }
-  const { address } = body;
   if (!address) {
     return res.status(400).send({ message: 'Invalid request, blockchain address missing' });
   }
@@ -67,28 +64,67 @@ app.post('/requestValidation', (req, res) => {
   const requestTimestamp = Math.floor(Date.now() / 1000);
 
   if (!addressEntry) {
-    memoryValidations[address] = { timestamp: requestTimestamp, message: '' };
+    //memoryValidations[address] = { timestamp: requestTimestamp, message: `${address}:${requestTimestamp}:starRegistry` };
+    memoryValidations[address] = { timestamp: requestTimestamp, message: '142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532330740:starRegistry' };
   }
 
-  const window = Math.floor(Date.now() / 1000) - memoryValidations[address].timestamp;
+  const window           = Math.floor(Date.now() / 1000) - memoryValidations[address].timestamp;
+  const validationWindow = windowDuration - window;
 
-  if (windowDuration - window < 0) {
+  if (validationWindow < 0) {
     delete memoryValidations[address];
     return res.status(400).send({ message: 'time window expired' });
   }
 
-  const message = `${address}:${memoryValidations[address].timestamp}:starRegistry`;
-  return res.status(200).send({ message, requestTimestamp, remaining: windowDuration - window });
+  const message = memoryValidations[address].message;
+
+  return res.status(200).send({ message, requestTimestamp, validationWindow });
 });
 
-app.post('message-signature/validate', (req, res) => {
-  const { body } = req;
-  if (!body) {
-    return res.status(400).send({ message: 'block is required' });
+app.post('/message-signature/validate', (req, res) => {
+  const { address, signature } = req.body;
+
+  if (!address) {
+    return res.status(400).send({ message: 'Invalid request, [address] missing' });
   }
 
-  const { address, signature } = body;
+  if (!signature) {
+    return res.status(400).send({ message: 'Invalid request, [signature] missing' });
+  }
 
+  const validationEntry = memoryValidations[address];
+  if (!validationEntry) {
+    return res.status(400).send({ message: 'validation data not found! retry with new request, go again to /requestValidation' });
+  }
+
+  const requestTimestamp = Math.floor(Date.now() / 1000);
+
+  const window = Math.floor(Date.now() / 1000) - validationEntry.timestamp;
+  const validationWindow = windowDuration - window;
+
+  if (validationWindow < 0) {
+    delete memoryValidations[address];
+    return res.status(400).send({ message: 'validation window expired, go again to /requestValidation' });
+  }
+
+  const message = validationEntry.message;
+
+  let registerStar = null;
+
+  try {
+    registerStar = bitcoinMessage.verify(message, address, signature);
+  } catch(error) {
+    console.error(error);
+    return res.status(400).send({ error: error.message });
+  }
+
+  if (!registerStar) {
+    const status = { address, requestTimestamp, message, validationWindow, messageSignature: 'invalid' };
+    return res.status(400).send({ registerStar, status });
+  }
+
+  const status = { address, requestTimestamp, message, validationWindow, messageSignature: 'valid' };
+  return res.status(200).send({ registerStar, status });
 });
 
 //
