@@ -42,13 +42,34 @@ app.post('/block', (req, res) => {
     return res.status(400).send({ message: 'block is required' });
   }
 
-  const newBlock = req.body;
+  const { address, star } = req.body;
+
+  if (!address) {
+    return res.status(400).send({ message: 'Invalid request, [address] missing' });
+  }
+
+  if (!star) {
+    return res.status(400).send({ message: 'Invalid request, [star] missing' });
+  }
+
+  const validationEntry = memoryValidations[address];
+
+  if (!validationEntry) {
+    return res.status(400).send({ message: 'address needs to get authorization first, go to /requestAuthorization' });
+  }
+
+  if (!validationEntry.registerStar) {
+    return res.status(400).send({ message: 'star registration not valid for this address' });
+  }
+
+  const newBlock = { address, star };
 
   return chain.addBlock(newBlock)             // we store the block
   .then(() => chain.getBlockHeight())
   .then(height => chain.getBlock(height - 1)) // we retrieve the new block
   .then(block => {
     console.log('New block: ', block);
+    delete memoryValidations[address];
     return res.status(200).send(block);       // we return the new block
   });
 });
@@ -123,17 +144,33 @@ app.post('/message-signature/validate', (req, res) => {
     return res.status(400).send({ registerStar, status });
   }
 
+  memoryValidations[address].registerStar = registerStar;
   const status = { address, requestTimestamp, message, validationWindow, messageSignature: 'valid' };
   return res.status(200).send({ registerStar, status });
 });
 
-//
-// app.post('/block', (req, res) => {
-//   const { body } = req;
-//   if (!body) {
-//     return res.status(400).send({ message: 'block is required' });
-//   }
-// });
+
+app.get('/stars/address:address', (req, res) => {
+  const { address } = req.params;
+  console.log(address);
+  if(address[0] !== ':'){
+    return res.status(400).send({ error: `address with wrong format: [${address}]` });
+  }
+
+  return res.status(200).send({ address });
+});
+
+app.get('/stars/hash:hash', (req, res) => {
+  const { hash } = req.params;
+  console.log(hash);
+  if(hash[0] !== ':'){
+    return res.status(400).send({ error: `hash with wrong format: [${hash}]` });
+  }
+
+  return res.status(200).send({ address });
+});
+
+
 
 /**
  * root basepath serves the documentation
