@@ -27,7 +27,7 @@
     <p>This endpoint retrieves the block located at a certain height</p>
 
     <ul>
-        <li>GET http://localhost:8000/block/{height}</li>
+        <li><code>GET http://localhost:8000/block/{height}</code></li>
     </ul>
 
     Example:
@@ -37,20 +37,21 @@
 
     Returns:
     <div>
-        {
+    <pre>
+    {
         "hash": "028a38089b871f8742f635bf93f926eff59e20a6f897cb38a81f96d60f985e00",
         "height": 0,
         "body": "First block in the chain - Genesis block",
         "time": 0,
         "previousBlockHash": ""
-        }
+    }</pre>
     </div>
 
     <h3>Insert block </h3>
     <p>This endpoint inserts a new block at the end of the chain</p>
 
     <ul>
-        <li>POST http://localhost:8000/block</li>
+        <li><code>POST http://localhost:8000/block</code></li>
     </ul>
 
     Example:
@@ -61,9 +62,14 @@
     </ul>
 
     Returns:
-    <div>
-        {"body":"Testing block with test string
-        data","height":4,"time":"1535120069","previousBlockHash":"90b78c67cf5ea45530251a967a75aace839108b322185770bb3aeb86946880cf","hash":"e83d84b6b6cb9a817e6c5bb39e89a8fb440c17b5dd07c3cbb8f8c8187ebce90d"}
+    <div><pre>
+    {
+        "body": "Testing block with test string data",
+        "height": 4,
+        "time": "1535120069",
+        "previousBlockHash":"90b78c67cf5ea45530251a967a75aace839108b322185770bb3aeb86946880cf",
+        "hash":"e83d84b6b6cb9a817e6c5bb39e89a8fb440c17b5dd07c3cbb8f8c8187ebce90d"
+    }</pre>
     </div>
 </div>
 </body>
