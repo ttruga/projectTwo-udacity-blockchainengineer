@@ -2,11 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Notary </title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          crossorigin="anonymous">
 </head>
-<body>
+<body style="padding-top: 50px">
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">Udacity Blockchain Notary</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+
     <h1>Introduction</h1>
-    Welcome to the Blockchain API! You can use our API to access blocks by using API endpoints, which can get information on blocks and transactions in our local blockchain.
+    Welcome to the Blockchain API! You can use our API to access blocks by using API endpoints, which can get
+    information on blocks and transactions in our local blockchain.
 
     <h2>Blocks</h2>
     <h3>Get block </h3>
@@ -41,12 +55,16 @@
 
     Example:
     <ul>
-        <li>curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body": "Testing block with test string data"}'</li>
+        <li>curl -X "POST" "http://localhost:8000/block" -H 'Content-Type: application/json' -d $'{"body": "Testing
+            block with test string data"}'
+        </li>
     </ul>
 
     Returns:
     <div>
-        {"body":"Testing block with test string data","height":4,"time":"1535120069","previousBlockHash":"90b78c67cf5ea45530251a967a75aace839108b322185770bb3aeb86946880cf","hash":"e83d84b6b6cb9a817e6c5bb39e89a8fb440c17b5dd07c3cbb8f8c8187ebce90d"}
+        {"body":"Testing block with test string
+        data","height":4,"time":"1535120069","previousBlockHash":"90b78c67cf5ea45530251a967a75aace839108b322185770bb3aeb86946880cf","hash":"e83d84b6b6cb9a817e6c5bb39e89a8fb440c17b5dd07c3cbb8f8c8187ebce90d"}
     </div>
+</div>
 </body>
 </html>
