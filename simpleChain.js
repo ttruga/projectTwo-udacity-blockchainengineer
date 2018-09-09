@@ -87,7 +87,7 @@ class Blockchain {
           let block = await this.getBlock(i)
           console.log(block)
           if (block && block.body && block.body.address === address) {
-            //TODO: DECODEAR EL "STORY" DEL STAR ANTES DE GUARDAR
+            block.body.star.decodedStory = block.body.star.story && Buffer.from(block.body.star.story, 'hex').toString()
             blocks.push(block)
           }
         }
@@ -106,7 +106,7 @@ class Blockchain {
         if (i !== 0) {
           let block = await this.getBlock(i)
           if (block && block.hash && block.hash === hash) {
-            //TODO: DECODEAR EL "STORY" DEL STAR ANTES DE RETORNAR
+            block.body.star.decodedStory = block.body.star.story && Buffer.from(block.body.star.story, 'hex').toString()
             return block
           }
         }

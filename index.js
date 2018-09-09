@@ -62,7 +62,14 @@ app.post('/block', (req, res) => {
     return res.status(400).send({ message: 'star registration not valid for this address' })
   }
 
-  // TODO: ENCODEAR EL "STORY" DENTRO DE LA STAR
+  const story = Buffer.from(star.story, 'ascii')
+
+  if (story.byteLength > 500 || story.toString().split(' ').length > 250) {
+    return res.status(400).send({ message: 'Invalid request, [star.story] larger than 500 bytes or has more than 250 words' })
+  }
+
+  star.story = story.toString('hex')
+
   const newBlock = { body: { address, star } }
 
   return chain.addBlock(newBlock) // we store the block
@@ -75,6 +82,10 @@ app.post('/block', (req, res) => {
     })
 })
 
+/**
+ * POST requestValidation endpoint
+ * Receives an address that needs to be auth in order to register a star later
+ */
 app.post('/requestValidation', (req, res) => {
   const { address } = req.body
 
@@ -86,12 +97,11 @@ app.post('/requestValidation', (req, res) => {
   const requestTimestamp = Math.floor(Date.now() / 1000)
 
   if (!addressEntry) {
-    // todo: DESCOMENTAR ESTA LINEA Y BORRAR LA SIGUIENTE PARA QUE PUEDA USARSE CON CUALQUIER LLAVE
-    // memoryValidations[address] = { timestamp: requestTimestamp, message: `${address}:${requestTimestamp}:starRegistry` };
-    memoryValidations[address] = {
-      timestamp: requestTimestamp,
-      message: '142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532330740:starRegistry'
-    }
+    memoryValidations[address] = { timestamp: requestTimestamp, message: `${address}:${requestTimestamp}:starRegistry` }
+    // memoryValidations[address] = {
+    //   timestamp: requestTimestamp,
+    //   message: '142BDCeSGbXjWKaAnYXbMpZ6sbrSAo3DpZ:1532330740:starRegistry'
+    // }
   }
 
   const window = Math.floor(Date.now() / 1000) - memoryValidations[address].timestamp
@@ -107,6 +117,10 @@ app.post('/requestValidation', (req, res) => {
   return res.status(200).send({ message, requestTimestamp, validationWindow })
 })
 
+/**
+ * POST message-signature/validate endpoint
+ * Receives an address and a signature text in order to validate the user ownership of the address
+ */
 app.post('/message-signature/validate', (req, res) => {
   const { address, signature } = req.body
 
@@ -150,6 +164,7 @@ app.post('/message-signature/validate', (req, res) => {
   }
 
   memoryValidations[address].registerStar = registerStar
+
   const status = {
     address,
     requestTimestamp,
@@ -160,6 +175,10 @@ app.post('/message-signature/validate', (req, res) => {
   return res.status(200).send({ registerStar, status })
 })
 
+/**
+ * GET /stars/address:address endpoint
+ * Receives an address and returns all registered stars associated to this address
+ */
 app.get('/stars/address:address', (req, res) => {
   const { address } = req.params
   console.log(address)
@@ -177,6 +196,10 @@ app.get('/stars/address:address', (req, res) => {
     })
 })
 
+/**
+ * GET /stars/hash:hash endpoint
+ * Receives a hash and returns the star associated with the hash
+ */
 app.get('/stars/hash:hash', (req, res) => {
   const { hash } = req.params
   console.log(hash)
